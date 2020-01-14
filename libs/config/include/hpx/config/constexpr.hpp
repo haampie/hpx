@@ -25,6 +25,12 @@
 /// keyword. Prefer using ``constexpr`` directly instead.
 #define HPX_CONSTEXPR_OR_CONST constexpr
 
+#ifdef HPX_HAVE_CXX17_INLINE_CONSTEXPR_VARIABLE
+#define HPX_INLINE_CONSTEXPR_VARIABLE inline constexpr
+#else
+#define HPX_INLINE_CONSTEXPR_VARIABLE constexpr
+#endif
+
 ///  This macro evaluates to ``static constexpr`` if the compiler supports it,
 /// ``static const`` otherwise.
 ///
