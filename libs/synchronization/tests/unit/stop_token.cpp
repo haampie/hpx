@@ -254,7 +254,9 @@ void test_stop_token_api()
         hpx::stop_source is_stopped2{is_stopped1};
         is_stopped1.request_stop();
 
+        // NOLINTNEXTLINE(bugprone-use-after-move)
         hpx::stop_token it_not_valid1{is_not_valid1.get_token()};
+        // NOLINTNEXTLINE(bugprone-use-after-move)
         hpx::stop_token it_not_valid2{is_not_valid2.get_token()};
         hpx::stop_token it_not_valid3;
         hpx::stop_token it_not_stopped1{is_not_stopped1.get_token()};

@@ -85,6 +85,7 @@ add_hpx_module(synchronization
     hpx_errors
     hpx_functional
     hpx_hashing
+    hpx_memory
     hpx_logging
     hpx_threading_base
     hpx_thread_support
