@@ -16,6 +16,7 @@
 #include <atomic>
 #include <chrono>
 #include <string>
+#include <type_traits>
 #include <utility>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -399,7 +400,8 @@ void test_jthread_api()
     // thread with no callable and invalid source
     hpx::jthread t0;
     hpx::jthread::native_handle_type nh = t0.native_handle();
-    HPX_TEST((std::is_same_v<decltype(nh), hpx::thread::native_handle_type>) );
+    HPX_TEST(
+        (std::is_same<decltype(nh), hpx::thread::native_handle_type>::value));
     HPX_TEST(!t0.joinable());
 
     hpx::stop_source ssourceStolen{std::move(ssource)};

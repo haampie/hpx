@@ -1,17 +1,17 @@
-//  Copyright (c)2020 Hartmut Kaiser
+//  Copyright (c) 2020 Hartmut Kaiser
 //
 //  SPDX-License-Identifier: BSL-1.0
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef HPX_THREADING_STOP_TOKEN_HPP
-#define HPX_THREADING_STOP_TOKEN_HPP
+#ifndef HPX_SYNCHRONIZATION_STOP_TOKEN_HPP
+#define HPX_SYNCHRONIZATION_STOP_TOKEN_HPP
 
 #include <hpx/config.hpp>
 #include <hpx/basic_execution.hpp>
 #include <hpx/memory.hpp>
+#include <hpx/synchronization/mutex.hpp>
 #include <hpx/thread_support.hpp>
-#include <hpx/threading/thread.hpp>
 
 #include <atomic>
 #include <cstddef>
@@ -71,7 +71,7 @@ namespace hpx {
             bool remove_this_callback();
 
         protected:
-            ~stop_callback_base() = default;
+            virtual ~stop_callback_base() = default;
         };
 
         ///////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ namespace hpx {
 
             std::atomic<std::uint64_t> state_;
             stop_callback_base* callbacks_ = nullptr;
-            hpx::thread::id signalling_thread_;
+            hpx::threads::thread_id_type signalling_thread_;
         };
 
     }    // namespace detail
@@ -527,8 +527,11 @@ namespace hpx {
     }
 
 #if defined(HPX_HAVE_CXX17_DEDUCTION_GUIDES)
+    // clang-format produces inconsistent result between different versions
+    // clang-format off
     template <typename Callback>
     stop_callback(stop_token, Callback) -> stop_callback<Callback>;
+    // clang-format on
 #endif
 
     // 32.3.3.4 Specialized algorithms
