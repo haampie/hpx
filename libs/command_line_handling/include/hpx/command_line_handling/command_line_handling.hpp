@@ -8,12 +8,11 @@
 #define HPX_UTIL_COMMAND_LINE_HANDLING_HPP
 
 #include <hpx/config.hpp>
-#include <hpx/functional/function.hpp>
+#include <hpx/functional.hpp>
 #include <hpx/hpx_init.hpp>
 #include <hpx/program_options.hpp>
-#include <hpx/runtime_configuration/runtime_configuration.hpp>
-#include <hpx/runtime_configuration/runtime_mode.hpp>
-#include <hpx/util/manage_config.hpp>
+#include <hpx/runtime_configuration.hpp>
+#include <hpx/util.hpp>
 
 #include <cstddef>
 #include <string>
@@ -22,9 +21,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace hpx { namespace util {
-    namespace detail {
-        HPX_EXPORT bool check_mpi_environment(runtime_configuration const& cfg);
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Helper functions for retrieving command line options (with error
