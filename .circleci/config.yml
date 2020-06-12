@@ -39,12 +39,11 @@ collect_coverage: &collect_coverage
     command: |
         mkdir -p /hpx/coverage
         lcov -q --gcov-tool llvm-cov-wrapper --no-external --capture --base-directory /hpx/source/ --directory /hpx/build/ --output-file /hpx/coverage/${CIRCLE_JOB}.info
-        ls -al /hpx/coverage
 
 persist_coverage: &persist_coverage
-    root: /hpx/coverage
+    root: /hpx
     paths:
-      - ./${CIRCLE_JOB}.info
+      - ./coverage
 
 gh_pages_filter: &gh_pages_filter
     filters:
