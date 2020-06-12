@@ -956,6 +956,7 @@ jobs:
             - ./build
 
   coverage:
+    <<: *defaults
     steps:
       - attach_workspace:
           at: /hpx
