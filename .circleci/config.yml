@@ -8,7 +8,7 @@
 defaults: &defaults
     working_directory: /hpx/build
     docker:
-      - image: stellargroup/build_env:ubuntu
+      - image: stabbles/hpx-test
 
 convert_xml: &convert_xml
     name: Converting XML
@@ -85,7 +85,7 @@ version: 2
 jobs:
   checkout_code:
     docker:
-      - image: stellargroup/build_env:ubuntu
+      - image: stabbles/hpx-test
     working_directory: /hpx
     steps:
       - checkout:
@@ -970,9 +970,9 @@ jobs:
 
   install:
     docker:
-      - image: stellargroup/build_env:ubuntu
+      - image: stabbles/hpx-test
     environment:
-      TARGET_IMAGE_NAME: stellargroup/hpx:dev
+      TARGET_IMAGE_NAME: stabbles/hpx:dev
     steps:
       - attach_workspace:
           at: /hpx
@@ -1008,7 +1008,7 @@ jobs:
           name: Test Docker Image
           command: |
               docker run ${TARGET_IMAGE_NAME} hello_world_distributed --hpx:bind=none
-              docker create -v /hpx --name sources stellargroup/hpx:dev /bin/true
+              docker create -v /hpx --name sources stabbles/hpx:dev /bin/true
               docker cp ./source/examples/quickstart/hello_world_distributed.cpp sources:/hpx
               docker run --volumes-from sources -w /hpx ${TARGET_IMAGE_NAME} \
                 hpxcxx --exe=hello_world_distributed_test_build              \
@@ -1034,7 +1034,7 @@ jobs:
   # here again to be able to push the new tag.
   push_stable_tag:
     docker:
-      - image: stellargroup/build_env:ubuntu
+      - image: stabbles/hpx-test
     steps:
       - checkout:
           path: /hpx/source
