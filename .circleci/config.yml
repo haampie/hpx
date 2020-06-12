@@ -38,7 +38,8 @@ collect_coverage: &collect_coverage
     name: Collecting coverage reports
     command: |
         mkdir -p /hpx/coverage
-        lcov --gcov-tool llvm-cov-wrapper --no-external --capture --base-directory /hpx/source/ --directory /hpx/build/ --output-file /hpx/coverage/${CIRCLE_JOB}.info
+        lcov -q --gcov-tool llvm-cov-wrapper --no-external --capture --base-directory /hpx/source/ --directory /hpx/build/ --output-file /hpx/coverage/${CIRCLE_JOB}.info
+        ls /hpx/coverage
 
 persist_coverage: &persist_coverage
     root: /hpx/coverage
