@@ -961,13 +961,13 @@ jobs:
       - attach_workspace:
           at: /hpx
       - run:
-        name: Generating Coverage Reports
-        command: |
-            lcov --gcov-tool llvm-cov-wrapper --no-external --capture --initial --base-directory /hpx/source/ --directory /hpx/build/ --output-file /hpx/coverage/baseline.info
-            TRACE_FILES_ARGS=`find /hpx/coverage -type f -iname '*.info' -exec sh -c "echo --add-tracefile {}" \;`
-            lcov ${TRACE_FILES_ARGS} --output-file "/hpx/coverage/combined.info"
-            lcov --remove combined.info '*CMakeCXXCompilerId.cpp*' '*static_parcelports.hpp*' '*modules.cpp*' '*config_entries.cpp*' '*force_linking.cpp' -o coverage.info
-            bash <(curl -s https://codecov.io/bash) -f coverage.info
+          name: Generating Coverage Reports
+          command: |
+              lcov --gcov-tool llvm-cov-wrapper --no-external --capture --initial --base-directory /hpx/source/ --directory /hpx/build/ --output-file /hpx/coverage/baseline.info
+              TRACE_FILES_ARGS=`find /hpx/coverage -type f -iname '*.info' -exec sh -c "echo --add-tracefile {}" \;`
+              lcov ${TRACE_FILES_ARGS} --output-file "/hpx/coverage/combined.info"
+              lcov --remove combined.info '*CMakeCXXCompilerId.cpp*' '*static_parcelports.hpp*' '*modules.cpp*' '*config_entries.cpp*' '*force_linking.cpp' -o coverage.info
+              bash <(curl -s https://codecov.io/bash) -f coverage.info
 
   install:
     docker:
