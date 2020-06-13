@@ -490,35 +490,35 @@ jobs:
       - persist_to_workspace:
           <<: *persist_coverage
 
-  tests.unit.component:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /hpx
-      - run:
-          name: Building Unit Tests
-          command: |
-              ninja -j2 -k 0 tests.unit.component tests.unit.components
-      - run:
-          name: Running Unit Tests
-          when: always
-          command: |
-              ulimit -c unlimited
-              ctest --timeout 60 -T test --no-compress-output --output-on-failure -R tests.unit.component
-      - run:
-          <<: *convert_xml
-      - run:
-          <<: *move_core_dump
-      - run:
-          <<: *move_debug_log
-      - run:
-          <<: *collect_coverage
-      - store_test_results:
-          path: tests.unit.component
-      - store_artifacts:
-          path: tests.unit.component
-      - persist_to_workspace:
-          <<: *persist_coverage
+#   tests.unit.component:
+#     <<: *defaults
+#     steps:
+#       - attach_workspace:
+#           at: /hpx
+#       - run:
+#           name: Building Unit Tests
+#           command: |
+#               ninja -j2 -k 0 tests.unit.component tests.unit.components
+#       - run:
+#           name: Running Unit Tests
+#           when: always
+#           command: |
+#               ulimit -c unlimited
+#               ctest --timeout 60 -T test --no-compress-output --output-on-failure -R tests.unit.component
+#       - run:
+#           <<: *convert_xml
+#       - run:
+#           <<: *move_core_dump
+#       - run:
+#           <<: *move_debug_log
+#       - run:
+#           <<: *collect_coverage
+#       - store_test_results:
+#           path: tests.unit.component
+#       - store_artifacts:
+#           path: tests.unit.component
+#       - persist_to_workspace:
+#           <<: *persist_coverage
 
   tests.unit.lcos:
     <<: *defaults
@@ -830,66 +830,66 @@ jobs:
       - persist_to_workspace:
           <<: *persist_coverage
 
-  tests.unit.modules.segmented_algorithms:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /hpx
-      - run:
-          name: Building Unit Tests
-          # We need to compile some tests serially because they eat too much
-          # memory
-          command: |
-              ninja -j1 -k 0 tests.unit.modules.segmented_algorithms
-      - run:
-          name: Running Unit Tests
-          when: always
-          command: |
-              ulimit -c unlimited
-              ctest --timeout 60 -T test --no-compress-output --output-on-failure -R tests.unit.modules.segmented_algorithms
-      - run:
-          <<: *convert_xml
-      - run:
-          <<: *move_core_dump
-      - run:
-          <<: *move_debug_log
-      - run:
-          <<: *collect_coverage
-      - store_test_results:
-          path: tests.unit.modules.segmented_algorithms
-      - store_artifacts:
-          path: tests.unit.modules.segmented_algorithms
-      - persist_to_workspace:
-          <<: *persist_coverage
+#   tests.unit.modules.segmented_algorithms:
+#     <<: *defaults
+#     steps:
+#       - attach_workspace:
+#           at: /hpx
+#       - run:
+#           name: Building Unit Tests
+#           # We need to compile some tests serially because they eat too much
+#           # memory
+#           command: |
+#               ninja -j1 -k 0 tests.unit.modules.segmented_algorithms
+#       - run:
+#           name: Running Unit Tests
+#           when: always
+#           command: |
+#               ulimit -c unlimited
+#               ctest --timeout 60 -T test --no-compress-output --output-on-failure -R tests.unit.modules.segmented_algorithms
+#       - run:
+#           <<: *convert_xml
+#       - run:
+#           <<: *move_core_dump
+#       - run:
+#           <<: *move_debug_log
+#       - run:
+#           <<: *collect_coverage
+#       - store_test_results:
+#           path: tests.unit.modules.segmented_algorithms
+#       - store_artifacts:
+#           path: tests.unit.modules.segmented_algorithms
+#       - persist_to_workspace:
+#           <<: *persist_coverage
 
-  tests.regressions:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /hpx
-      - run:
-          name: Building Regressions Tests
-          command: |
-              ninja -j2 -k 0 tests.regressions
-      - run:
-          name: Running Regressions Tests
-          when: always
-          command: |
-              ctest --timeout 60 -T test --no-compress-output --output-on-failure -R tests.regressions
-      - run:
-          <<: *convert_xml
-      - run:
-          <<: *move_core_dump
-      - run:
-          <<: *move_debug_log
-      - run:
-          <<: *collect_coverage
-      - store_test_results:
-          path: tests.regressions
-      - store_artifacts:
-          path: tests.regressions
-      - persist_to_workspace:
-          <<: *persist_coverage
+#   tests.regressions:
+#     <<: *defaults
+#     steps:
+#       - attach_workspace:
+#           at: /hpx
+#       - run:
+#           name: Building Regressions Tests
+#           command: |
+#               ninja -j2 -k 0 tests.regressions
+#       - run:
+#           name: Running Regressions Tests
+#           when: always
+#           command: |
+#               ctest --timeout 60 -T test --no-compress-output --output-on-failure -R tests.regressions
+#       - run:
+#           <<: *convert_xml
+#       - run:
+#           <<: *move_core_dump
+#       - run:
+#           <<: *move_debug_log
+#       - run:
+#           <<: *collect_coverage
+#       - store_test_results:
+#           path: tests.regressions
+#       - store_artifacts:
+#           path: tests.regressions
+#       - persist_to_workspace:
+#           <<: *persist_coverage
 
   tests.headers:
     <<: *defaults
@@ -1120,8 +1120,8 @@ workflows:
           <<: *core_dependency
       - tests.unit.agas:
           <<: *core_dependency
-      - tests.unit.component:
-          <<: *core_dependency
+    #   - tests.unit.component:
+    #       <<: *core_dependency
       - tests.unit.lcos:
           <<: *core_dependency
       - tests.unit.parcelset:
@@ -1138,10 +1138,10 @@ workflows:
           <<: *core_dependency
       - tests.unit.modules.execution:
           <<: *core_dependency
-      - tests.unit.modules.segmented_algorithms:
-          <<: *core_dependency
-      - tests.regressions:
-          <<: *core_dependency
+    #   - tests.unit.modules.segmented_algorithms:
+    #       <<: *core_dependency
+    #   - tests.regressions:
+    #       <<: *core_dependency
       - tests.performance:
           <<: *core_dependency
       - tests.headers:
@@ -1162,7 +1162,7 @@ workflows:
             - tests.unit.actions
             - tests.unit.agas
             - tests.unit.build
-            - tests.unit.component
+            # - tests.unit.component
             - tests.unit.lcos
             - tests.unit.parcelset
             - tests.unit.resource
@@ -1171,11 +1171,11 @@ workflows:
             - tests.unit.modules
             - tests.unit.modules.algorithms
             - tests.unit.modules.execution
-            - tests.unit.modules.segmented_algorithms
+            # - tests.unit.modules.segmented_algorithms
             - tests.headers
             - tests.headers.modules
             - tests.performance
-            - tests.regressions
+            # - tests.regressions
             - examples
           <<: *gh_pages_filter
       - coverage:
@@ -1185,7 +1185,7 @@ workflows:
             - tests.unit.actions
             - tests.unit.agas
             - tests.unit.build
-            - tests.unit.component
+            # - tests.unit.component
             - tests.unit.lcos
             - tests.unit.parcelset
             - tests.unit.resource
@@ -1194,11 +1194,11 @@ workflows:
             - tests.unit.modules
             - tests.unit.modules.algorithms
             - tests.unit.modules.execution
-            - tests.unit.modules.segmented_algorithms
+            # - tests.unit.modules.segmented_algorithms
             - tests.headers
             - tests.headers.modules
             - tests.performance
-            - tests.regressions
+            # - tests.regressions
             - examples
       - push_stable_tag:
           requires:
