@@ -1,0 +1,50 @@
+name: Linux Coverage (Debug)
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: stabbles/clang-test
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure
+      shell: bash
+      run: |
+          mkdir /build && cd /build
+          cmake $GITHUB_WORKSPACE \
+              -Bbuild \
+              -GNinja \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DCMAKE_CXX_FLAGS="--coverage" \
+              -DCMAKE_EXE_LINKER_FLAGS="--coverage" \
+              -DHPX_WITH_MALLOC=system \
+              -DHPX_WITH_EXAMPLES=ON \
+              -DHPX_WITH_TESTS=ON \
+              -DHPX_WITH_TESTS_MAX_THREADS_PER_LOCALITY=2
+    - name: Build
+      shell: bash
+      run: |
+          cd /build
+          cmake --build . --target all
+          cmake --build . --target examples
+    - name: Test
+      shell: bash
+      run: |
+          cd /build
+          ctest \
+            --output-on-failure \
+            --tests-regex tests.examples \
+            --exclude-regex tests.examples.transpose.transpose_block_numa
+    - name: Coverage report
+      shell: bash
+      run: |
+          cd /build
+          zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
+          grcov ccov.zip -s $GITHUB_WORKSPACE -o $GITHUB_WORKSPACE/coverage.info --llvm --branch --ignore "/*" --ignore-not-existing -t lcov /build
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./coverage.info
