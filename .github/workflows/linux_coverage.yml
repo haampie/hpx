@@ -39,7 +39,7 @@ jobs:
       run: |
           cd /build
           zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
-          grcov ccov.zip -s $GITHUB_WORKSPACE -o $GITHUB_WORKSPACE/coverage.info --llvm --branch --ignore "/*" --ignore-not-existing -t lcov /build
+          grcov ccov.zip -s $GITHUB_WORKSPACE -o $GITHUB_WORKSPACE/coverage.info --llvm --ignore "/*" --ignore-not-existing -t lcov /build
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
