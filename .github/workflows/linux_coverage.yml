@@ -27,8 +27,7 @@ jobs:
       shell: bash
       run: |
           cd /build
-          cmake --build . --target all
-          cmake --build . --target examples
+          ninja
     - name: Test
       shell: bash
       run: |
