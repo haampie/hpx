@@ -9,7 +9,6 @@ build:
             -B /build \
             -G "Ninja" \
             -DCMAKE_BUILD_TYPE=Debug \
-            -DCMAKE_CXX_CLANG_TIDY=clang-tidy \
             -DCMAKE_CXX_FLAGS="-O0 --coverage -fcolor-diagnostics" \
             -DCMAKE_EXE_LINKER_FLAGS="--coverage" \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=On \
@@ -29,7 +28,7 @@ build:
             -DHPX_WITH_TESTS_DEBUG_LOG_DESTINATION=/build/debug-log.txt \
             -DHPX_WITH_SPINLOCK_DEADLOCK_DETECTION=On
     - |
-      cd /build && ninja -j$(nproc) -k 0 \
+      cd /build && ninja \
         core \
         tests.unit.actions \
         tests.unit.agas \
