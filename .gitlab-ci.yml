@@ -1,0 +1,110 @@
+
+build:
+  tags:
+    - kubernetes
+  image: stabbles/hpx-test
+  script: 
+    - |
+      cmake $CI_PROJECT_DIR \
+             -B /build \
+             -GNinja \
+             -DCMAKE_BUILD_TYPE=Debug \
+             -DCMAKE_CXX_FLAGS="-O0 --coverage" \
+             -DCMAKE_EXE_LINKER_FLAGS="--coverage" \
+             -DCMAKE_VERBOSE_MAKEFILE=ON \
+             -DHPX_WITH_MALLOC=system \
+             -DHPX_WITH_EXAMPLES=ON \
+             -DHPX_WITH_TESTS=ON \
+             -DHPX_WITH_TESTS_MAX_THREADS_PER_LOCALITY=2
+    - cmake --build /build --target core
+    - cmake --build /build --target examples
+    - cmake --build /build --target tests.performance
+    - cmake --build /build --target tests.regressions
+    - cmake --build /build --target tests.unit.actions
+    - cmake --build /build --target tests.unit.agas
+    - cmake --build /build --target tests.unit.build
+    - cmake --build /build --target tests.unit.component
+    - cmake --build /build --target tests.unit.components
+    - cmake --build /build --target tests.unit.lcos
+    - cmake --build /build --target tests.unit.modules.affinity
+    - cmake --build /build --target tests.unit.modules.algorithms
+    - cmake --build /build --target tests.unit.modules.allocator_support
+    - cmake --build /build --target tests.unit.modules.asio
+    - cmake --build /build --target tests.unit.modules.assertion
+    - cmake --build /build --target tests.unit.modules.async_combinators
+    - cmake --build /build --target tests.unit.modules.async_distributed
+    - cmake --build /build --target tests.unit.modules.async_local
+    - cmake --build /build --target tests.unit.modules.basic_execution
+    - cmake --build /build --target tests.unit.modules.batch_environments
+    - cmake --build /build --target tests.unit.modules.cache
+    - cmake --build /build --target tests.unit.modules.checkpoint
+    - cmake --build /build --target tests.unit.modules.collectives
+    - cmake --build /build --target tests.unit.modules.compute
+    - cmake --build /build --target tests.unit.modules.concepts
+    - cmake --build /build --target tests.unit.modules.concurrency
+    - cmake --build /build --target tests.unit.modules.config
+    - cmake --build /build --target tests.unit.modules.config_registry
+    - cmake --build /build --target tests.unit.modules.coroutines
+    - cmake --build /build --target tests.unit.modules.datastructures
+    - cmake --build /build --target tests.unit.modules.debugging
+    - cmake --build /build --target tests.unit.modules.distributed_executors
+    - cmake --build /build --target tests.unit.modules.errors
+    - cmake --build /build --target tests.unit.modules.execution
+    - cmake --build /build --target tests.unit.modules.executors
+    - cmake --build /build --target tests.unit.modules.filesystem
+    - cmake --build /build --target tests.unit.modules.format
+    - cmake --build /build --target tests.unit.modules.functional
+    - cmake --build /build --target tests.unit.modules.futures
+    - cmake --build /build --target tests.unit.modules.hardware
+    - cmake --build /build --target tests.unit.modules.hashing
+    - cmake --build /build --target tests.unit.modules.init_runtime
+    - cmake --build /build --target tests.unit.modules.iterator_support
+    - cmake --build /build --target tests.unit.modules.lcos_distributed
+    - cmake --build /build --target tests.unit.modules.local_lcos
+    - cmake --build /build --target tests.unit.modules.logging
+    - cmake --build /build --target tests.unit.modules.memory
+    - cmake --build /build --target tests.unit.modules.naming_base
+    - cmake --build /build --target tests.unit.modules.pack_traversal
+    - cmake --build /build --target tests.unit.modules.performance_counters
+    - cmake --build /build --target tests.unit.modules.preprocessor
+    - cmake --build /build --target tests.unit.modules.program_options
+    - cmake --build /build --target tests.unit.modules.resiliency
+    - cmake --build /build --target tests.unit.modules.resource_partitioner
+    - cmake --build /build --target tests.unit.modules.runtime_configuration
+    - cmake --build /build --target tests.unit.modules.runtime_local
+    - cmake --build /build --target tests.unit.modules.schedulers
+    - cmake --build /build --target tests.unit.modules.segmented_algorithms
+    - cmake --build /build --target tests.unit.modules.serialization
+    - cmake --build /build --target tests.unit.modules.static_reinit
+    - cmake --build /build --target tests.unit.modules.statistics
+    - cmake --build /build --target tests.unit.modules.string_util
+    - cmake --build /build --target tests.unit.modules.synchronization
+    - cmake --build /build --target tests.unit.modules.testing
+    - cmake --build /build --target tests.unit.modules.thread_executors
+    - cmake --build /build --target tests.unit.modules.thread_support
+    - cmake --build /build --target tests.unit.modules.threading
+    - cmake --build /build --target tests.unit.modules.threading_base
+    - cmake --build /build --target tests.unit.modules.threadmanager
+    - cmake --build /build --target tests.unit.modules.timed_execution
+    - cmake --build /build --target tests.unit.modules.timing
+    - cmake --build /build --target tests.unit.modules.type_support
+    - cmake --build /build --target tests.unit.modules.util
+    - cmake --build /build --target tests.unit.parcelset
+    - cmake --build /build --target tests.unit.resource
+    - cmake --build /build --target tests.unit.traits
+    - cmake --build /build --target tests.unit.util
+    - |
+      cd /build && ctest \
+        --output-on-failure \
+        -R tests.unit \
+        --exclude-regex tests.examples.transpose.transpose_block_numa|\
+          tests.unit.modules.algorithms|\
+          tests.unit.modules.compute_cuda|\
+          tests.unit.modules.execution|\
+          tests.unit.modules.segmented_algorithms|\
+          tests.unit.modules.compute.numa_allocator
+    - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
+    - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm --ignore "/*" --ignore-not-existing -t lcov /build
+  artifacts:
+    paths:
+    - coverage.info
