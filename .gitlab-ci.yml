@@ -1,7 +1,9 @@
+variables:
+    SLURM_TIMELIMIT: "2:00:00"
 
 build:
   tags:
-    - kubernetes
+    - daint-container
   image: stabbles/hpx-test
   script: 
     - |
