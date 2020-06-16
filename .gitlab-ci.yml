@@ -4,7 +4,7 @@ variables:
 
 build:
   tags:
-    - daint-container
+    - kubernetes
   image: stabbles/hpx-test
   script: 
     - |
@@ -108,16 +108,7 @@ build:
         tests.regressions \
         tests.performance \
         examples
-    - |
-      cd /build && ctest \
-        --output-on-failure \
-        -R tests.unit \
-        --exclude-regex tests.examples.transpose.transpose_block_numa|\
-          tests.unit.modules.algorithms|\
-          tests.unit.modules.compute_cuda|\
-          tests.unit.modules.execution|\
-          tests.unit.modules.segmented_algorithms|\
-          tests.unit.modules.compute.numa_allocator
+    - cd /build && ctest --output-on-failure
     - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
     - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm --ignore "/*" --ignore-not-existing -t lcov /build
   artifacts:
