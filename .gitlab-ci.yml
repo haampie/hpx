@@ -1,10 +1,11 @@
 variables:
+    SLURM_CPUS_PER_TASK: 18
     SLURM_TIMELIMIT: "2:00:00"
     PULL_IMAGE: "YES"
 
 build:
   tags:
-    - kubernetes
+    - daint-container
   image: stabbles/hpx-test
   script: 
     - |
