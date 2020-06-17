@@ -3,7 +3,7 @@ variables:
     SLURM_TIMELIMIT: "2:00:00"
     PULL_IMAGE: "YES"
 
-build_core:
+build:
   tags:
     - kubernetes
   image: registry.gitlab.com/cscs-ci/stellar-group/hpx_docker/hpx-ccache
@@ -32,25 +32,16 @@ build_core:
             -DHPX_WITH_TESTS_DEBUG_LOG_DESTINATION=/build/debug-log.txt \
             -DHPX_WITH_SPINLOCK_DEADLOCK_DETECTION=On
     - cd /build && ninja core tests examples
-    - ctest -j4
+    - ctest -j6 --timeout 180 --regex-exclude distributed.tcp|tests.unit.component.launch_process|tests.regressions.threads.block_os_threads_1036
   after_script:
     - ccache -s
     - cd /build
     - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
-    - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage --llvm -t html
-    - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm -t lcov
+    - mv ccov.zip $CI_PROJECT_DIR/
+    #- grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage --llvm -t html
+    #- grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm -t lcov
   artifacts:
     when: always
     paths:
-      - coverage/
-      - coverage.info
-
-#    - cd /build && ctest -j$(nproc) --output-on-failure --exclude-regex tests.unit.modules.include.api_future
-#    - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
-#    - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm --ignore "/*" --ignore-not-existing -t lcov /build
-#  after_script:
-#    - ccache -s
-#  artifacts:
-#    paths:
-#    - ccov.zip
-#    - coverage.info
+      - ccov.zip
+      #- coverage.info
