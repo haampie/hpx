@@ -10,7 +10,7 @@ build:
   script: 
     - cp -r $CI_PROJECT_DIR /code
     - |
-      cmake $CI_PROJECT_DIR \
+      cmake /code \
             -B /build \
             -G "Ninja" \
             -DCMAKE_BUILD_TYPE=Debug \
