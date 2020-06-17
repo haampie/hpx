@@ -8,7 +8,6 @@ build_core:
     - kubernetes
   image: registry.gitlab.com/cscs-ci/stellar-group/hpx_docker/hpx-ccache
   script: 
-    - ccache -o log_file=/root/ccache.log
     - ccache -s
     - cp -r $CI_PROJECT_DIR /code
     - |
@@ -33,18 +32,18 @@ build_core:
             -DHPX_WITH_TESTS_DEBUG_LOG_DESTINATION=/build/debug-log.txt \
             -DHPX_WITH_SPINLOCK_DEADLOCK_DETECTION=On
     - cd /build && ninja core tests examples
+    - ctest -j4
   after_script:
     - ccache -s
-    - cp /root/ccache.log $CI_PROJECT_DIR/
     - cd /build
     - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
-    - mv ccov.zip $CI_PROJECT_DIR/
-    #- grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm --ignore "/*" --ignore-not-existing -t lcov /build
+    - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage --llvm -t html
+    - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm -t lcov
   artifacts:
     when: always
     paths:
-      - ccache.log
-      - ccov.zip
+      - coverage/
+      - coverage.info
 
 #    - cd /build && ctest -j$(nproc) --output-on-failure --exclude-regex tests.unit.modules.include.api_future
 #    - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
