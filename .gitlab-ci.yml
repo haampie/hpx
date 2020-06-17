@@ -33,123 +33,97 @@ build_core:
             -DHPX_WITH_TESTS_DEBUG_LOG=On \
             -DHPX_WITH_TESTS_DEBUG_LOG_DESTINATION=/build/debug-log.txt \
             -DHPX_WITH_SPINLOCK_DEADLOCK_DETECTION=On
-    - cd /build && ninja core
+    - |
+      cd /build && ninja \
+        core \
+        tests.unit.actions \
+        tests.unit.agas \
+        tests.unit.build \
+        tests.unit.component tests.unit.components \
+        tests.unit.lcos \
+        tests.unit.parcelset \
+        tests.unit.resource \
+        tests.unit.traits \
+        tests.unit.util \
+        tests.unit.modules.affinity \
+        tests.unit.modules.allocator_support \
+        tests.unit.modules.asio \
+        tests.unit.modules.assertion \
+        tests.unit.modules.async_distributed \
+        tests.unit.modules.async_combinators \
+        tests.unit.modules.execution_base \
+        tests.unit.modules.batch_environments \
+        tests.unit.modules.cache \
+        tests.unit.modules.checkpoint \
+        tests.unit.modules.collectives \
+        tests.unit.modules.compute \
+        tests.unit.modules.concepts \
+        tests.unit.modules.concurrency \
+        tests.unit.modules.config \
+        tests.unit.modules.config_registry \
+        tests.unit.modules.coroutines \
+        tests.unit.modules.datastructures \
+        tests.unit.modules.debugging \
+        tests.unit.modules.distributed_executors \
+        tests.unit.modules.errors \
+        tests.unit.modules.executors \
+        tests.unit.modules.filesystem \
+        tests.unit.modules.format \
+        tests.unit.modules.functional \
+        tests.unit.modules.futures \
+        tests.unit.modules.hardware \
+        tests.unit.modules.hashing \
+        tests.unit.modules.init_runtime \
+        tests.unit.modules.iterator_support \
+        tests.unit.modules.lcos_distributed \
+        tests.unit.modules.async_local \
+        tests.unit.modules.lcos_local \
+        tests.unit.modules.logging \
+        tests.unit.modules.memory \
+        tests.unit.modules.naming_base \
+        tests.unit.modules.pack_traversal \
+        tests.unit.modules.performance_counters \
+        tests.unit.modules.preprocessor \
+        tests.unit.modules.program_options \
+        tests.unit.modules.resiliency \
+        tests.unit.modules.resource_partitioner \
+        tests.unit.modules.runtime_configuration \
+        tests.unit.modules.runtime_local \
+        tests.unit.modules.schedulers \
+        tests.unit.modules.serialization \
+        tests.unit.modules.static_reinit \
+        tests.unit.modules.statistics \
+        tests.unit.modules.string_util \
+        tests.unit.modules.synchronization \
+        tests.unit.modules.testing \
+        tests.unit.modules.thread_executors \
+        tests.unit.modules.thread_support \
+        tests.unit.modules.threading \
+        tests.unit.modules.threading_base \
+        tests.unit.modules.threadmanager \
+        tests.unit.modules.timed_execution \
+        tests.unit.modules.timing \
+        tests.unit.modules.type_support \
+        tests.unit.modules.util \
+        tests.unit.modules.algorithms \
+        tests.unit.modules.execution \
+        tests.unit.modules.segmented_algorithms \
+        tests.regressions \
+        tests.performance \
+        examples
   after_script:
     - ccache -s
     - cp /root/ccache.log $CI_PROJECT_DIR/
+    - cd /build
+    - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
+    - mv ccov.zip $CI_PROJECT_DIR/
+    #- grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm --ignore "/*" --ignore-not-existing -t lcov /build
   artifacts:
     when: always
     paths:
-    - ccache.log
+      - ccache.log
+      - ccov.zip
 
-#build:
-#  tags:
-#    - kubernetes
-#  image: registry.gitlab.com/cscs-ci/stellar-group/hpx_docker/hpx-ccache
-#  script: 
-#    - cp -r $CI_PROJECT_DIR /code
-#    - |
-#      cmake /code \
-#            -B /build \
-#            -G "Ninja" \
-#            -DCMAKE_BUILD_TYPE=Debug \
-#            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-#            -DCMAKE_CXX_FLAGS="-O0 --coverage -fcolor-diagnostics" \
-#            -DCMAKE_EXE_LINKER_FLAGS="--coverage" \
-#            -DCMAKE_EXPORT_COMPILE_COMMANDS=On \
-#            -DHPX_WITH_MALLOC=system \
-#            -DHPX_WITH_GIT_COMMIT=${CIRCLE_SHA1} \
-#            -DHPX_WITH_GIT_BRANCH="${CIRCLE_BRANCH}" \
-#            -DHPX_WITH_GIT_TAG="${CIRCLE_TAG}" \
-#            -DHPX_WITH_TOOLS=On \
-#            -DHPX_WITH_TESTS_HEADERS=On \
-#            -DHPX_WITH_COMPILER_WARNINGS=On \
-#            -DHPX_WITH_COMPILER_WARNINGS_AS_ERRORS=On \
-#            -DHPX_WITH_DEPRECATION_WARNINGS=On \
-#            -dhpx_with_thread_local_storage=on \
-#            -dhpx_with_stacktraces_static_symbols=on \
-#            -dhpx_with_stacktraces_demangle_symbols=off \
-#            -dhpx_with_tests_debug_log=on \
-#            -dhpx_with_tests_debug_log_destination=/build/debug-log.txt \
-#            -dhpx_with_spinlock_deadlock_detection=on
-#    - |
-#      cd /build && ninja \
-#        core \
-#        tests.unit.actions \
-#        tests.unit.agas \
-#        tests.unit.build \
-#        tests.unit.component tests.unit.components \
-#        tests.unit.lcos \
-#        tests.unit.parcelset \
-#        tests.unit.resource \
-#        tests.unit.traits \
-#        tests.unit.util \
-#        tests.unit.modules.affinity \
-#        tests.unit.modules.allocator_support \
-#        tests.unit.modules.asio \
-#        tests.unit.modules.assertion \
-#        tests.unit.modules.async_distributed \
-#        tests.unit.modules.async_combinators \
-#        tests.unit.modules.execution_base \
-#        tests.unit.modules.batch_environments \
-#        tests.unit.modules.cache \
-#        tests.unit.modules.checkpoint \
-#        tests.unit.modules.collectives \
-#        tests.unit.modules.compute \
-#        tests.unit.modules.concepts \
-#        tests.unit.modules.concurrency \
-#        tests.unit.modules.config \
-#        tests.unit.modules.config_registry \
-#        tests.unit.modules.coroutines \
-#        tests.unit.modules.datastructures \
-#        tests.unit.modules.debugging \
-#        tests.unit.modules.distributed_executors \
-#        tests.unit.modules.errors \
-#        tests.unit.modules.executors \
-#        tests.unit.modules.filesystem \
-#        tests.unit.modules.format \
-#        tests.unit.modules.functional \
-#        tests.unit.modules.futures \
-#        tests.unit.modules.hardware \
-#        tests.unit.modules.hashing \
-#        tests.unit.modules.init_runtime \
-#        tests.unit.modules.iterator_support \
-#        tests.unit.modules.lcos_distributed \
-#        tests.unit.modules.async_local \
-#        tests.unit.modules.lcos_local \
-#        tests.unit.modules.logging \
-#        tests.unit.modules.memory \
-#        tests.unit.modules.naming_base \
-#        tests.unit.modules.pack_traversal \
-#        tests.unit.modules.performance_counters \
-#        tests.unit.modules.preprocessor \
-#        tests.unit.modules.program_options \
-#        tests.unit.modules.resiliency \
-#        tests.unit.modules.resource_partitioner \
-#        tests.unit.modules.runtime_configuration \
-#        tests.unit.modules.runtime_local \
-#        tests.unit.modules.schedulers \
-#        tests.unit.modules.serialization \
-#        tests.unit.modules.static_reinit \
-#        tests.unit.modules.statistics \
-#        tests.unit.modules.string_util \
-#        tests.unit.modules.synchronization \
-#        tests.unit.modules.testing \
-#        tests.unit.modules.thread_executors \
-#        tests.unit.modules.thread_support \
-#        tests.unit.modules.threading \
-#        tests.unit.modules.threading_base \
-#        tests.unit.modules.threadmanager \
-#        tests.unit.modules.timed_execution \
-#        tests.unit.modules.timing \
-#        tests.unit.modules.type_support \
-#        tests.unit.modules.util \
-#        tests.unit.modules.algorithms \
-#        tests.unit.modules.execution \
-#        tests.unit.modules.segmented_algorithms \
-#        tests.regressions \
-#        tests.performance \
-#        examples
 #    - cd /build && ctest -j$(nproc) --output-on-failure --exclude-regex tests.unit.modules.include.api_future
 #    - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
 #    - grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm --ignore "/*" --ignore-not-existing -t lcov /build
