@@ -30,10 +30,10 @@ build:
   after_script:
     - ccache -s
     - cd /build
-    - grcov . -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm -t lcov
-    - bash <(curl -s https://codecov.io/bash) -f $CI_PROJECT_DIR/coverage.info
-    #- zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
+    - grcov . -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.json --llvm -t coveralls --token $COVERALLS_TOKEN --vcs-branch $CI_COMMIT_REF_NAME --commit-sha $CI_COMMIT_SHA --service-name gitlab-ci --service-job-id $CI_JOB_ID --ignore-not-existing --prefix-dir /code --ignore "/*"
+    - du -sh $CI_PROJECT_DIR/coverage.json
+    - curl -v -i -F json_file=@$CI_PROJECT_DIR/coverage.json https://coveralls.io/api/v1/jobs
   artifacts:
     when: always
     paths:
-      - coverage.info
+      - coverage.json
