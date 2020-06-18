@@ -30,7 +30,7 @@ build:
   after_script:
     - ccache -s
     - cd /build
-    - grcov . -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.json --llvm -t coveralls --token $COVERALLS_TOKEN --vcs-branch $CI_COMMIT_REF_NAME --commit-sha $CI_COMMIT_SHA --service-name gitlab-ci --service-job-id $CI_JOB_ID #--ignore-not-existing --prefix-dir /code --ignore "/*"
+    - grcov . -s /code -o $CI_PROJECT_DIR/coverage.json --llvm -t coveralls --token $COVERALLS_TOKEN --vcs-branch $CI_COMMIT_REF_NAME --commit-sha $CI_COMMIT_SHA --service-name gitlab-ci --service-job-id $CI_JOB_ID --ignore "/usr"
     - du -sh $CI_PROJECT_DIR/coverage.json
     - curl -v -i -F json_file=@$CI_PROJECT_DIR/coverage.json https://coveralls.io/api/v1/jobs
   artifacts:
