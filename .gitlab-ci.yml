@@ -1,14 +1,8 @@
-variables:
-    SLURM_CPUS_PER_TASK: 18
-    SLURM_TIMELIMIT: "2:00:00"
-    PULL_IMAGE: "YES"
-
 build:
   tags:
     - kubernetes
   image: registry.gitlab.com/cscs-ci/stellar-group/hpx_docker/hpx-ccache
   script: 
-    - ccache -s
     - cp -r $CI_PROJECT_DIR /code
     - |
       cmake /code \
@@ -32,16 +26,14 @@ build:
             -DHPX_WITH_TESTS_DEBUG_LOG_DESTINATION=/build/debug-log.txt \
             -DHPX_WITH_SPINLOCK_DEADLOCK_DETECTION=On
     - cd /build && ninja core tests examples
-    - ctest -j6 --timeout 180 --regex-exclude 'distributed.tcp|tests.unit.component.launch_process|tests.regressions.threads.block_os_threads_1036'
+    - ctest -j8 --timeout 240 --regex-exclude '.*distributed.tcp.*|tests.unit.component.launch_process|tests.regressions.threads.block_os_threads_1036'
   after_script:
     - ccache -s
     - cd /build
-    - zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
-    - mv ccov.zip $CI_PROJECT_DIR/
-    #- grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage --llvm -t html
-    #- grcov ccov.zip -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm -t lcov
+    - grcov . -s $CI_PROJECT_DIR -o $CI_PROJECT_DIR/coverage.info --llvm -t lcov
+    - bash <(curl -s https://codecov.io/bash) -f $CI_PROJECT_DIR/coverage.info
+    #- zip -0 ccov.zip `find . \( -name "*.gcno" -o -name "*.gcda" \) -print`;
   artifacts:
     when: always
     paths:
-      - ccov.zip
-      #- coverage.info
+      - coverage.info
