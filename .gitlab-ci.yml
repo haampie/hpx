@@ -26,7 +26,7 @@ build:
             -DHPX_WITH_TESTS_DEBUG_LOG_DESTINATION=/build/debug-log.txt \
             -DHPX_WITH_SPINLOCK_DEADLOCK_DETECTION=On
     - cd /build && ninja core tests examples
-    - ctest -j8 --timeout 240 --regex-exclude '.*distributed.tcp.*|tests.unit.component.launch_process|tests.regressions.threads.block_os_threads_1036'
+    - ctest -j6 --timeout 300
   after_script:
     - ccache -s
     - cd /build
